@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateJobDto } from './dto/create-job.dto';
 import { JobsRepository } from './jobs.repository';
-import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class JobsService {
@@ -10,15 +9,18 @@ export class JobsService {
   async create(dto: CreateJobDto, userId: string) {
     const category = dto.category?.toLowerCase() ?? 'general';
 
-    return this.repo.createJob({
+    const job = await this.repo.createJob({
       posterId: userId,
       title: dto.title,
       description: dto.description,
       category,
       suggestedPrice: dto.suggestedPrice,
     });
+
+    return job; // ✅ Job type inferred from repo
   }
-  async close(jobId: string, userId: string) {
+
+  async close(jobId: string, userId: string): Promise<{ success: true }> {
     const success = await this.repo.closeJob(jobId, userId);
 
     if (!success) {
@@ -29,9 +31,9 @@ export class JobsService {
   }
 }
 
-/**Concept
-
-*Business decisions live here
-*This is testable
-*This is reusable
-*This is scalable */
+/*
+ * Notes:
+ * - Business logic lives here
+ * - Services are testable
+ * - Explicit return types improve TS safety
+ */

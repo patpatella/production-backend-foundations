@@ -13,7 +13,7 @@ export class JobsController {
   async createJob(
     @Body() dto: CreateJobDto,
     @CurrentUser() user: { id: string },
-  ) {
+  ): Promise<{ jobId: string }> {
     const job = await this.service.create(dto, user.id);
     return { jobId: job.id };
   }
@@ -22,12 +22,14 @@ export class JobsController {
   async closeJob(
     @Body('jobId') jobId: string,
     @CurrentUser() user: { id: string },
-  ) {
+  ): Promise<{ success: true }> {
     return this.service.close(jobId, user.id);
   }
 }
 
 /*
- * No req
- * No auth checks
- * Clean signature */
+ * Notes:
+ * - Controller only handles HTTP & DTO mapping
+ * - AuthGuard ensures user exists
+ * - Explicit return types improve TypeScript safety
+ */

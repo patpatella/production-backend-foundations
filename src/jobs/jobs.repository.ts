@@ -16,7 +16,7 @@ export class JobsRepository {
     return await this.prisma.job.create({
       data: {
         ...data,
-        status: JobStatus.open,
+        status: JobStatus.OPEN,
       },
     });
   }
@@ -28,9 +28,9 @@ export class JobsRepository {
           where: {
             id: jobId,
             posterId: userId,
-            status: JobStatus.open,
+            status: JobStatus.OPEN,
           },
-          data: { status: JobStatus.completed },
+          data: { status: JobStatus.COMPLETED },
         });
         return result.count > 0;
       },
