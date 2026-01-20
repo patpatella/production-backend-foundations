@@ -9,7 +9,7 @@ import { Response } from 'express';
 
 @Catch()
 export class GlobalHttpExceptionFilter implements ExceptionFilter {
-catch(exception: unknown, host: ArgumentsHost) {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
@@ -17,13 +17,24 @@ catch(exception: unknown, host: ArgumentsHost) {
       const status = exception.getStatus();
       const res = exception.getResponse();
 
+      // Narrow the type safely
+      let message: string;
+      if (typeof res === 'string') {
+        message = res;
+      } else if (typeof res === 'object' && res !== null && 'message' in res) {
+        // Explicit type guard
+        const typedRes = res as { message?: string };
+        message = typedRes.message ?? 'Error';
+      } else {
+        message = 'Error';
+      }
+
       response.status(status).json({
         error: {
           code: HttpStatus[status],
-          message:
-          typeof res === 'string' ? res : (res as any).message ?? 'Error',
+          message,
         },
-});
+      });
       return;
     }
 

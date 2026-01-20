@@ -15,6 +15,7 @@ export class JobsService {
       description: dto.description,
       category,
       suggestedPrice: dto.suggestedPrice,
+      organizationId: dto.organizationId,
     });
 
     return job; // ✅ Job type inferred from repo

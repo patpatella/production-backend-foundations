@@ -14,4 +14,7 @@ export class CreateJobDto {
   @IsOptional()
   @IsNumber()
   suggestedPrice?: number;
+
+  @IsString()
+  organizationId!: string;
 }

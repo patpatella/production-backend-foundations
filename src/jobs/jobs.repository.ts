@@ -12,6 +12,7 @@ export class JobsRepository {
     description: string;
     category: string;
     suggestedPrice?: number;
+    organizationId: string;
   }) {
     return await this.prisma.job.create({
       data: {
