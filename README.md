@@ -1,98 +1,133 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Backend Foundations — Week 1
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This repository contains the Week 1 work of a production-focused backend engineering program. The goal of this week was not feature velocity, but **building the correct mental models and technical foundations** required to design, scale, and maintain real-world backend systems.
 
-## Description
+The project is intentionally structured to mirror how backend systems are built and operated in production environments — with strong type safety, clear architectural boundaries, correct relational data modeling, and defensive API design.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Core Principles
 
-```bash
-$ npm install
+This codebase was built around the following principles:
+
+* **Type safety first** — Types are treated as a core design tool, not an afterthought
+* **Clear separation of concerns** — Controllers, services, repositories, and infrastructure are strictly separated
+* **Production-minded architecture** — Design decisions consider scaling, failure modes, and maintainability
+* **Data integrity over convenience** — Relational constraints, transactions, and indexes are intentional
+* **Defensive APIs** — Validation, error modeling, and idempotency are implemented from day one
+
+---
+
+## Tech Stack
+
+* **TypeScript** (strict mode enabled)
+* **NestJS** — modular, scalable backend framework
+* **Prisma** — database access with explicit schema modeling
+* **PostgreSQL** — relational database (designed for scale)
+* **class-validator / class-transformer** — request validation
+
+---
+
+## Architecture Overview
+
+The application follows a layered architecture with clearly defined responsibilities:
+
+```
+Controller  ->  Service  ->  Repository  ->  Database
+     |            |             |
+ Validation   Business Logic   Data Access
 ```
 
-## Compile and run the project
+### Key Architectural Decisions
 
-```bash
-# development
-$ npm run start
+* Controllers contain **no business logic**
+* Services contain **domain and business rules only**
+* Repositories encapsulate **all database access**
+* Prisma never leaks outside the repository layer
+* DTOs are separated from domain models
+* Infrastructure concerns (auth, idempotency, logging) are handled via guards, interceptors, and filters
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## Domain Modeling
 
-## Run tests
+The system models a multi-tenant backend domain with the following core entities:
 
-```bash
-# unit tests
-$ npm run test
+* **User** — authenticated system actor
+* **Organization** — tenant boundary
+* **Task / Job** — unit of work owned by an organization
 
-# e2e tests
-$ npm run test:e2e
+Relational modeling decisions include:
 
-# test coverage
-$ npm run test:cov
-```
+* Explicit foreign key constraints
+* Indexed query paths based on access patterns
+* Transaction boundaries for write safety
+* Avoidance of JSON blobs for relational data
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## TypeScript Strategy
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+TypeScript is used as a **design tool**, not just a compiler:
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+* Strict mode enabled (`strict: true`)
+* No `any` in core logic
+* Domain types separated from transport (DTO) types
+* Type narrowing and utility types used deliberately
+* Compile-time safety paired with runtime validation
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## API Design
 
-Check out a few resources that may come in handy when working with NestJS:
+The API follows production-grade REST principles:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+* Clear resource modeling (not CRUD dumping)
+* Consistent request/response contracts
+* Explicit error modeling using HTTP semantics
+* Validation occurs before business logic execution
 
-## Support
+### Idempotency
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Write endpoints support idempotency via an application-level interceptor:
 
-## Stay in touch
+* Clients may safely retry requests
+* Duplicate writes are prevented
+* Business logic remains deterministic
+* Infrastructure concerns are isolated from services
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+---
 
-## License
+## Performance & Reliability Considerations
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Even at an early stage, the system accounts for:
+
+* Index selection based on query patterns
+* Transaction safety for concurrent operations
+* Connection pooling awareness
+* Detection of potential N+1 query patterns
+* Understanding of read vs write trade-offs
+
+---
+
+## What This Repository Represents
+
+This is **not** a tutorial project.
+
+It represents:
+
+* A production-oriented backend foundation
+* Correct architectural habits formed early
+* An understanding of how small design decisions scale into real-world consequences
+
+This repository serves as a baseline for future weeks, where additional concerns such as caching, async processing, observability, and system hardening will be layered on top.
+
+---
+
+## Status
+
+Week 1 complete.
+
+Subsequent weeks will build on this foundation rather than rewrite it.
