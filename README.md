@@ -2,7 +2,7 @@
 
 This project demonstrates the refactoring of an Express.js file into a NestJS application following clean architecture and production-ready backend practices.
 
-The goal of this refactor was not to change features, but to improve structure, type safety, maintainability, and scalability by introducing clear separation of concerns and leveraging NestJS’s architectural patterns.
+The goal of this refactor was to improve structure, type safety, maintainability, and scalability by introducing clear separation of concerns and leveraging NestJS’s architectural patterns.
 
 ## This is the original Express Structure....before refactoring
 
@@ -91,10 +91,9 @@ export const closeJob = async (req: TypedRequest, res: Response) => {
 };
 
 
-## Problems I noticed:
+## Problems I noticed on the file:
 
 * Controllers handled HTTP logic, business logic, and database access
-* req and res objects were passed deep into the application
 * Prisma was accessed directly inside route handlers
 * Error handling and validation were inconsistent
 
@@ -115,7 +114,3 @@ src/
  │   └── current-user.decorator.ts
  └── main.ts
 
-
-Database connections
-
-Cross-cutting concerns
